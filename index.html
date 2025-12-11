@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today Would Be Nice</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header__logo">Today Would Be Nice</div>
+    <nav class="header__nav">
+      <a href="#" class="nav__link" data-section="work">Work</a>
+      <a href="#" class="nav__link" data-section="about">About</a>
+      <a href="https://cal.com/schdhri/30min" class="nav__link" target="_blank" rel="noopener noreferrer">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Project Numbers - Fixed Left (Desktop) / Bottom (Mobile) -->
+  <div class="project-numbers">
+    <button class="project-number active" data-index="0">1</button>
+    <button class="project-number" data-index="1">2</button>
+    <button class="project-number" data-index="2">3</button>
+    <button class="project-number" data-index="3">4</button>
+  </div>
+
+  <!-- Horizontal Scroll Container -->
+  <main class="projects-container">
+    <section class="project" data-index="0">
+      <div class="project__grid">
+        <div class="project__image-wrapper">
+          <img src="images/project1.svg" alt="Zamana Studios Project" class="project__image">
+        </div>
+      </div>
+    </section>
+
+    <section class="project" data-index="1">
+      <div class="project__grid">
+        <div class="project__image-wrapper">
+          <img src="images/project2.svg" alt="Atelier Noir Project" class="project__image">
+        </div>
+      </div>
+    </section>
+
+    <section class="project" data-index="2">
+      <div class="project__grid">
+        <div class="project__image-wrapper">
+          <img src="images/project3.svg" alt="Vertex Labs Project" class="project__image">
+        </div>
+      </div>
+    </section>
+
+    <section class="project" data-index="3">
+      <div class="project__grid">
+        <div class="project__image-wrapper">
+          <img src="images/project4.svg" alt="Maison Collective Project" class="project__image">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Client/Scope Bar - Fixed Bottom -->
+  <footer class="meta-bar">
+    <div class="meta-bar__client">
+      <span class="meta-bar__label">Client</span>
+      <span class="meta-bar__value" id="client-name">Zamana Studios</span>
+    </div>
+    <div class="meta-bar__scope">
+      <span class="meta-bar__label">Scope</span>
+      <span class="meta-bar__value" id="scope-type">Website</span>
+    </div>
+  </footer>
+
+  <!-- About Overlay -->
+  <div class="about-overlay" id="about-overlay">
+    <button class="about-overlay__close" aria-label="Close about section">&times;</button>
+    <div class="about-overlay__content">
+      <h1 class="about-overlay__text">We design portfolio websites.</h1>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
+

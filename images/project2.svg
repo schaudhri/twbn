@@ -1,0 +1,10 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#f0ebe3"/>
+  <rect x="100" y="80" width="600" height="440" rx="4" fill="#1a1a1a"/>
+  <rect x="120" y="100" width="560" height="400" fill="#fff"/>
+  <text x="400" y="280" font-family="system-ui" font-size="36" fill="#1a1a1a" text-anchor="middle" font-weight="300">Atelier Noir</text>
+  <text x="400" y="320" font-family="system-ui" font-size="14" fill="#888" text-anchor="middle" letter-spacing="4">BRAND IDENTITY</text>
+  <line x1="300" y1="350" x2="500" y2="350" stroke="#1a1a1a" stroke-width="1"/>
+</svg>
+
+

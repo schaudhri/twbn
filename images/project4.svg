@@ -1,0 +1,16 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#faf8f5"/>
+  <rect x="200" y="120" width="400" height="360" fill="#fff" filter="url(#shadow)"/>
+  <defs>
+    <filter id="shadow" x="180" y="100" width="440" height="400" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="20" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <rect x="240" y="160" width="320" height="200" fill="#2d2926"/>
+  <text x="400" y="270" font-family="Georgia, serif" font-size="28" fill="#d4af37" text-anchor="middle">Maison</text>
+  <text x="400" y="305" font-family="Georgia, serif" font-size="16" fill="#fff" text-anchor="middle" letter-spacing="6">COLLECTIVE</text>
+  <rect x="240" y="400" width="150" height="40" fill="#2d2926"/>
+  <text x="315" y="425" font-family="system-ui" font-size="12" fill="#fff" text-anchor="middle">SHOP NOW</text>
+</svg>
+
+
