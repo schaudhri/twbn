@@ -3,88 +3,1509 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Today Would Be Nice</title>
-  <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.15/dist/lenis.css">
-  <link rel="stylesheet" href="css/style.css">
-  <!-- Fathom - beautiful, simple website analytics -->
-  <script src="https://cdn.usefathom.com/script.js" data-site="QFPHRVVU" defer></script>
-  <!-- / Fathom -->
+  <title>Today Would Be Nice — Design Studio, Lahore</title>
+  <meta name="description" content="Today Would Be Nice is a design studio in Lahore designing prototypes, applications, and websites.">
+  <link rel="icon" type="image/svg+xml" href="./assets/twbn-logomark.svg">
+  <!-- GSAP for flick cards slider -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/Draggable.min.js"></script>
+
+  <style>
+
+    /* ─── FONTS ──────────────────────────────────────────────────── */
+    @font-face {
+      font-family: 'TWBN-Inktrap';
+      src: url('./typography/twbn-inktrap.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Satoshi';
+      src: url('./typography/satoshi/Satoshi-Light.otf') format('opentype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Satoshi';
+      src: url('./typography/satoshi/Satoshi-Regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Satoshi';
+      src: url('./typography/satoshi/Satoshi-Medium.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Satoshi';
+      src: url('./typography/satoshi/Satoshi-Bold.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* ─── RESET ──────────────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Satoshi', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #FFFFFF;
+      color: #191917;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      font-weight: 400;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    img, svg {
+      display: block;
+      max-width: 100%;
+    }
+    ::selection {
+      background: #191917;
+      color: #FFFFFF;
+    }
+
+    /* ─── TOKENS ─────────────────────────────────────────────────── */
+    :root {
+      --ink:        #191917;
+      --paper:      #FFFFFF;
+      --rule:       rgba(25, 25, 23, 0.12);
+      --rule-strong: rgba(25, 25, 23, 0.22);
+      --muted:      rgba(25, 25, 23, 0.55);
+      --dim:        rgba(25, 25, 23, 0.35);
+
+      --f-display:  'TWBN-Inktrap', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --f-body:     'Satoshi', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+      --nav-h:      72px;
+      --edge:       clamp(20px, 4vw, 56px);
+      --gap:        clamp(16px, 2.4vw, 32px);
+    }
+
+    /* ─── TYPE PRIMITIVES ───────────────────────────────────────── */
+    .label {
+      font-family: var(--f-display);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .label-muted { color: var(--muted); }
+    .label-dim   { color: var(--dim); }
+
+    .rule-top    { border-top: 1px solid var(--ink); }
+    .rule-bottom { border-bottom: 1px solid var(--rule); }
+    .rule-bottom-strong { border-bottom: 1px solid var(--ink); }
+
+    /* ─── NAV ────────────────────────────────────────────────────── */
+    nav.site {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      height: var(--nav-h);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: saturate(180%) blur(8px);
+      -webkit-backdrop-filter: saturate(180%) blur(8px);
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--edge);
+    }
+
+    /* ─── HAMBURGER ──────────────────────────────────────────────── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--ink);
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      transform-origin: center;
+    }
+    .nav-hamburger.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: #ffffff; }
+    .nav-hamburger.is-open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: #ffffff; }
+    nav.site.menu-open {
+      background: #191917;
+      border-bottom-color: rgba(255,255,255,0.1);
+    }
+    nav.site.menu-open .nav-logo { filter: invert(1); }
+
+    /* ─── MOBILE MENU OVERLAY ────────────────────────────────────── */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(18px, 2.4vw, 32px);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+    }
+    .nav-logo {
+      height: 30px;
+      width: auto;
+    }
+    .nav-mid {
+      justify-self: center;
+      font-family: var(--f-display);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .nav-mid .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--ink);
+      border-radius: 50%;
+      margin: 0 10px;
+      vertical-align: 2px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(18px, 2.4vw, 32px);
+      justify-self: end;
+    }
+    .nav-links a {
+      font-family: 'TWBN-Inktrap', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 20px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      position: relative;
+      padding: 6px 0;
+    }
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: var(--ink);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+    .nav-links a:hover::after,
+    .nav-links a[aria-current="true"]::after {
+      transform: scaleX(1);
+    }
+    .nav-links .num {
+      color: var(--dim);
+      margin-right: 8px;
+      font-size: 10px;
+    }
+
+    /* ─── LAYOUT ─────────────────────────────────────────────────── */
+    main { padding-top: var(--nav-h); }
+    section { padding: clamp(80px, 10vw, 144px) var(--edge); }
+    .section-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      padding-bottom: 20px;
+      margin-bottom: clamp(56px, 8vw, 96px);
+    }
+    .section-num {
+      font-family: var(--f-display);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ─── HERO ───────────────────────────────────────────────────── */
+    #hero {
+      padding-top: clamp(48px, 6vw, 72px);
+      padding-bottom: 0;
+    }
+    .hero-logo-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: clamp(32px, 5vw, 80px);
+      margin-bottom: clamp(40px, 6vw, 72px);
+    }
+    .hero-logomark {
+      width: clamp(120px, 16vw, 260px);
+      height: auto;
+      display: block;
+    }
+    .hero-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: var(--gap);
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--ink);
+      margin-bottom: clamp(48px, 7vw, 88px);
+    }
+    .hero-meta .cell {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .hero-meta .k {
+      font-family: var(--f-display);
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .hero-meta .v {
+      font-family: var(--f-body);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      line-height: 1.4;
+    }
+
+    .hero-headline {
+      font-family: var(--f-display);
+      font-weight: 400;
+      font-size: clamp(56px, 11.5vw, 180px);
+      line-height: 0.86;
+      letter-spacing: -0.035em;
+      color: var(--ink);
+      margin-bottom: clamp(40px, 6vw, 72px);
+    }
+    .hero-headline .line { display: block; }
+    .hero-headline .indent { padding-left: clamp(60px, 12vw, 220px); }
+    .hero-headline em {
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .hero-foot {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: clamp(32px, 6vw, 96px);
+      padding-bottom: clamp(80px, 10vw, 128px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero-statement {
+      font-family: var(--f-body);
+      font-weight: 400;
+      font-size: clamp(20px, 2.2vw, 30px);
+      line-height: 1.28;
+      letter-spacing: -0.012em;
+      color: var(--ink);
+      max-width: 28ch;
+    }
+    .hero-side {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-self: end;
+      max-width: 36ch;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    /* ─── MARQUEE (restrained) ──────────────────────────────────── */
+    .marquee {
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 18px 0;
+      background: var(--paper);
+    }
+    .marquee-track {
+      display: inline-flex;
+      align-items: center;
+      gap: 48px;
+      animation: marquee 38s linear infinite;
+      padding-left: 48px;
+    }
+    .marquee-item {
+      font-family: var(--f-display);
+      font-size: clamp(20px, 2.4vw, 34px);
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      text-transform: uppercase;
+    }
+    .marquee-item.thin {
+      color: var(--dim);
+    }
+    .marquee-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--ink);
+      border-radius: 50%;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── WORK ───────────────────────────────────────────────────── */
+    #work .section-head {
+      border-bottom: 1px solid var(--ink);
+      margin-bottom: 0;
+    }
+    .work-title-block {
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+    }
+    .work-h {
+      font-family: var(--f-display);
+      font-size: clamp(28px, 3.6vw, 46px);
+      letter-spacing: -0.015em;
+      line-height: 1;
+    }
+
+    .work-list { list-style: none; }
+    .work-item {
+      display: grid;
+      grid-template-columns: 56px 1.4fr 1fr 0.6fr 24px;
+      align-items: center;
+      gap: var(--gap);
+      padding: clamp(22px, 2.4vw, 30px) 0;
+      border-bottom: 1px solid var(--rule);
+      cursor: pointer;
+      position: relative;
+      transition: padding 0.25s ease;
+    }
+    .work-item:hover { padding-left: 12px; }
+    .wi-num {
+      font-family: var(--f-display);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+    .wi-title {
+      font-family: var(--f-display);
+      font-size: clamp(20px, 2.4vw, 32px);
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+    .wi-client {
+      font-family: var(--f-body);
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+    }
+    .wi-tag {
+      font-family: var(--f-display);
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .wi-arrow {
+      font-family: var(--f-display);
+      font-size: 18px;
+      color: var(--ink);
+      text-align: right;
+      transition: transform 0.25s ease;
+    }
+    .work-item:hover .wi-arrow {
+      transform: translate(4px, -4px);
+    }
+    .work-foot {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      padding-top: 28px;
+    }
+    .work-foot .count {
+      font-family: var(--f-display);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .work-foot .all {
+      font-family: var(--f-display);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 4px;
+    }
+
+    /* ─── ABOUT ──────────────────────────────────────────────────── */
+    #about {
+      border-top: 1px solid var(--rule);
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 8vw, 128px);
+      align-items: start;
+    }
+    .about-headline {
+      font-family: var(--f-display);
+      font-size: clamp(36px, 5.2vw, 78px);
+      line-height: 0.95;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+    }
+    .about-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 44ch;
+      font-size: clamp(15px, 1.15vw, 17px);
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .about-body p:first-child { color: var(--ink); }
+    .about-body p:nth-child(n+2) { color: var(--muted); }
+
+    .about-meta {
+      margin-top: clamp(56px, 8vw, 96px);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--gap);
+      border-top: 1px solid var(--ink);
+      padding-top: 28px;
+    }
+    .meta-cell .k {
+      font-family: var(--f-display);
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .meta-cell .v {
+      font-family: var(--f-body);
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+    .meta-cell .v .secondary { color: var(--muted); display: block; }
+
+    /* ─── SERVICES ───────────────────────────────────────────────── */
+    #services {
+      border-top: 1px solid var(--rule);
+    }
+    #services .section-head {
+      border-bottom: 1px solid var(--ink);
+      margin-bottom: 0;
+    }
+    .svc-row {
+      display: grid;
+      grid-template-columns: 56px 1.5fr 1fr;
+      grid-template-rows: auto auto;
+      column-gap: var(--gap);
+      row-gap: 16px;
+      align-items: start;
+      padding: clamp(40px, 5vw, 64px) 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .svc-num {
+      font-family: var(--f-display);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      grid-column: 1;
+      grid-row: 1 / 3;
+      padding-top: 8px;
+    }
+    .svc-name {
+      font-family: var(--f-display);
+      font-size: clamp(28px, 3.6vw, 52px);
+      line-height: 0.96;
+      letter-spacing: -0.018em;
+      color: var(--ink);
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .svc-desc {
+      font-size: clamp(14px, 1vw, 16px);
+      line-height: 1.6;
+      color: var(--ink);
+      max-width: 38ch;
+      grid-column: 2;
+      grid-row: 2;
+    }
+    .svc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      grid-column: 3;
+      grid-row: 1 / 3;
+    }
+    .svc-list li {
+      list-style: none;
+      font-family: var(--f-body);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+      padding-left: 16px;
+      position: relative;
+    }
+    .svc-list li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--dim);
+    }
+
+    /* ─── CONTACT ────────────────────────────────────────────────── */
+    #contact {
+      border-top: 1px solid var(--rule);
+      padding-bottom: clamp(80px, 10vw, 128px);
+    }
+    #contact .section-head {
+      border-bottom: 1px solid var(--ink);
+      margin-bottom: clamp(56px, 8vw, 96px);
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: clamp(48px, 6vw, 96px);
+    }
+    .contact-headline {
+      font-family: var(--f-display);
+      font-size: clamp(56px, 9.5vw, 152px);
+      line-height: 0.88;
+      letter-spacing: -0.035em;
+      color: var(--ink);
+      margin-bottom: 32px;
+    }
+    .contact-headline em { font-style: italic; }
+    .contact-sub {
+      font-family: var(--f-body);
+      font-size: clamp(16px, 1.4vw, 20px);
+      line-height: 1.5;
+      color: var(--muted);
+      max-width: 36ch;
+      margin-bottom: clamp(40px, 5vw, 64px);
+    }
+    .contact-email {
+      display: inline-block;
+      font-family: var(--f-display);
+      font-size: clamp(22px, 2.6vw, 36px);
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 6px;
+      transition: opacity 0.2s;
+    }
+    .contact-email:hover { opacity: 0.55; }
+
+    .contact-side {
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      padding-top: 12px;
+    }
+    .contact-block .k {
+      font-family: var(--f-display);
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .contact-block .v {
+      font-family: var(--f-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .contact-block a.v { display: inline-block; }
+    .contact-block a.v:hover { color: var(--muted); }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--ink);
+      padding: 32px var(--edge) 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+      gap: 24px;
+    }
+    .ft-brand {
+      display: flex;
+      align-items: center;
+    }
+    .ft-mark { height: 28px; width: auto; }
+    .ft-center {
+      justify-self: center;
+    }
+    .ft-instagram {
+      display: flex;
+      align-items: center;
+      color: var(--ink);
+      opacity: 0.5;
+      transition: opacity 0.15s;
+    }
+    .ft-instagram:hover { opacity: 1; }
+    .ft-right {
+      justify-self: end;
+      font-family: var(--f-display);
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+
+    /* Tablet ≤ 900px */
+    @media (max-width: 900px) {
+      .nav-links { gap: 20px; }
+      .nav-links a { font-size: 16px; }
+
+      .hero-headline .indent { padding-left: 0; }
+      .hero-logo-row { gap: 32px; }
+      .hero-logomark { width: clamp(80px, 14vw, 160px); }
+
+      .about-grid { grid-template-columns: 1fr; gap: 32px; }
+
+      .svc-row {
+        grid-template-columns: 40px 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .svc-num  { grid-column: 1; grid-row: 1; }
+      .svc-name { grid-column: 2; grid-row: 1; }
+      .svc-desc { grid-column: 2; grid-row: 2; }
+      .svc-list { grid-column: 2; grid-row: 3; }
+
+      .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+
+      footer { grid-template-columns: 1fr; gap: 20px; }
+      .ft-center { justify-self: start; }
+      .ft-right   { justify-self: start; }
+    }
+
+    /* Mobile ≤ 640px */
+    @media (max-width: 640px) {
+      :root {
+        --nav-h: 60px;
+        --edge:  20px;
+      }
+
+      /* hamburger visible, links hidden until open */
+      .nav-hamburger { display: flex; }
+      .nav-links {
+        position: fixed;
+        top: var(--nav-h);
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #191917;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 36px;
+        z-index: 499;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      .nav-links.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .nav-links a {
+        font-family: 'TWBN-Inktrap', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 28px;
+        letter-spacing: 0.08em;
+        color: #ffffff;
+      }
+      .nav-links a::after { background: #ffffff; }
+
+      /* hero: hide logomark, full-width headline */
+      .hero-logo-row { display: block; }
+      .hero-logomark { display: none; }
+      .hero-headline { font-size: clamp(52px, 15vw, 80px); }
+
+      /* section heads: hide right label */
+      .section-head .label { display: none; }
+
+      /* services: single full column */
+      .svc-row {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+      .svc-num  { display: none; }
+      .svc-name { grid-column: 1; grid-row: 1; }
+      .svc-desc { grid-column: 1; grid-row: 2; }
+      .svc-list { grid-column: 1; grid-row: 3; }
+
+      /* footer: center everything */
+      footer { text-align: center; padding: 28px var(--edge); }
+      .ft-brand { justify-content: center; }
+      .ft-center { justify-self: center; }
+      .ft-right   { justify-self: center; }
+    }
+
+    /* ─── FLICK CARDS ───────────────────────────────────────────── */
+    .flick-stage {
+      overflow: hidden;
+      margin-top: clamp(48px, 6vw, 80px);
+      margin-bottom: clamp(16px, 2vw, 28px);
+    }
+
+    .flick-group {
+      position: relative;
+      font-size: clamp(6px, 1.9vw, 16px);
+    }
+
+    .flick-group__relative-object {
+      opacity: 0;
+      pointer-events: none;
+      width: 47em;
+      position: relative;
+    }
+
+    .flick-group__relative-object-before {
+      padding-top: 75%;
+    }
+
+    .flick-group__collection {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .flick-group__list {
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      position: relative;
+    }
+
+    .flick-group__item {
+      position: absolute;
+    }
+
+    .flick-card {
+      color: #fff;
+      -webkit-user-select: none;
+      user-select: none;
+      background-color: var(--ink);
+      border-radius: 0.75em;
+      justify-content: center;
+      align-items: center;
+      width: 23.5em;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flick-card__before {
+      padding-top: 140%;
+    }
+
+    .flick-card__media {
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .flick-card__cat {
+      position: absolute;
+      top: 1.5em;
+      left: 1.5em;
+      font-family: var(--f-display);
+      font-size: 0.6875em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.38);
+    }
+
+    .flick-card__h3 {
+      font-family: var(--f-display);
+      letter-spacing: -0.025em;
+      font-size: 3em;
+      font-weight: 400;
+      line-height: 1.05;
+      position: absolute;
+      text-align: center;
+      padding: 0 0.6em;
+      color: #fff;
+    }
+
+    .flick-card__btn {
+      background-color: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 0.375em;
+      justify-content: center;
+      align-items: center;
+      width: calc(100% - 3em);
+      height: 3em;
+      text-decoration: none;
+      display: flex;
+      position: absolute;
+      bottom: 1.5em;
+      left: 1.5em;
+    }
+
+    .flick-card__btn-span {
+      color: rgba(255, 255, 255, 0.8);
+      font-family: var(--f-display);
+      font-size: 0.6875em;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    [data-flick-cards-dragger] {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: auto;
+      touch-action: pan-y;
+    }
+
+    [data-flick-drag-status="grab"]     { cursor: grab; }
+    [data-flick-drag-status="grabbing"] { cursor: grabbing; }
+
+    .flick-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      margin-top: clamp(28px, 3.5vw, 48px);
+    }
+
+    .flick-btn {
+      background: none;
+      border: 1px solid var(--rule-strong);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--ink);
+      transition: border-color 0.2s ease, opacity 0.2s ease;
+      flex-shrink: 0;
+    }
+    .flick-btn:hover { border-color: var(--ink); }
+    .flick-btn svg { display: block; }
+
+    .flick-hint {
+      font-family: var(--f-display);
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    [data-flick-cards-item-status] .flick-card__media {
+      transition: opacity 0.2s ease;
+      opacity: 0.45;
+    }
+
+    [data-flick-cards-item-status="2-before"] .flick-card__media,
+    [data-flick-cards-item-status="2-after"]  .flick-card__media {
+      opacity: 0.72;
+    }
+
+    [data-flick-cards-item-status="active"] .flick-card__media {
+      opacity: 1;
+    }
+
+    [data-flick-cards-item-status] .flick-card__btn {
+      transition: opacity 0.4s cubic-bezier(0.625, 0.05, 0, 1),
+                  transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      transform: translate(0%, 50%) rotate(0.001deg);
+    }
+
+    [data-flick-cards-item-status="active"] .flick-card__btn {
+      opacity: 1;
+      transform: translate(0%, 0%) rotate(0.001deg);
+    }
+
+    /* ─── REDUCED MOTION ─────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track { animation: none; }
+      .work-item, .nav-links a::after, .wi-arrow, .contact-email {
+        transition: none;
+      }
+      html { scroll-behavior: auto; }
+    }
+
+  </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="header__logo">Today Would Be Nice</div>
-    <nav class="header__nav">
-      <a href="#" class="nav__link" data-section="about">About</a>
-      <a href="https://cal.com/schdhri/30min" class="nav__link" target="_blank" rel="noopener noreferrer">Contact</a>
-    </nav>
-  </header>
 
-  <!-- Project Numbers - Fixed Left (Desktop) / Bottom (Mobile) -->
-  <div class="project-numbers">
-    <button class="project-number active" data-index="0">1</button>
-    <button class="project-number" data-index="1">2</button>
-    <button class="project-number" data-index="2">3</button>
-    <button class="project-number" data-index="3">4</button>
-  </div>
+  <!-- ─── NAV ───────────────────────────────────────────────────── -->
+  <nav class="site" role="navigation" aria-label="Primary">
+    <a href="#top" class="nav-brand" aria-label="Today Would Be Nice — Home">
+      <img src="./assets/twbn-logo.svg" class="nav-logo" alt="Today Would Be Nice">
+    </a>
+    <div class="nav-links" id="nav-links">
+      <a href="#work">Portfolio</a>
+      <a href="#about">About Us</a>
+      <a href="#services">What We Do</a>
+      <a href="#contact">Let's Talk</a>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
 
-  <!-- Horizontal Scroll Container -->
-  <main class="projects-container">
-    <section class="project" data-index="0">
-      <div class="project__grid">
-        <div class="project__image-wrapper">
-          <img src="images/project1.svg" alt="Zamana Studios Project" class="project__image">
-        </div>
+  <main id="top">
+
+    <!-- ─── HERO ──────────────────────────────────────────────────── -->
+    <section id="hero" aria-labelledby="hero-heading">
+
+<div class="hero-logo-row">
+        <h1 class="hero-headline" id="hero-heading">
+          <span class="line">Today</span>
+          <span class="line indent"><em>Would</em></span>
+          <span class="line">Be Nice.</span>
+        </h1>
+        <img src="./assets/twbn-logomark.svg" class="hero-logomark" alt="" aria-hidden="true">
+      </div>
+
+      <div class="hero-foot">
+        <p class="hero-statement">
+          A design studio designing prototypes, applications and websites.
+        </p>
       </div>
     </section>
 
-    <section class="project" data-index="1">
-      <div class="project__grid">
-        <div class="project__image-wrapper">
-          <img src="images/project2.svg" alt="Atelier Noir Project" class="project__image">
+
+    <!-- ─── WORK (Portfolio) ──────────────────────────────────────── -->
+    <section id="work" aria-labelledby="work-heading">
+      <div class="section-head">
+        <h2 class="work-h" id="work-heading">Portfolio</h2>
+        <span class="label label-muted">Selected — 2024 / 2026</span>
+      </div>
+
+      <div class="flick-stage">
+        <div data-flick-cards-init="" class="flick-group">
+          <div class="flick-group__relative-object">
+            <div class="flick-group__relative-object-before"></div>
+          </div>
+          <div data-flick-cards-collection="" class="flick-group__collection">
+            <div data-flick-cards-list="" class="flick-group__list">
+
+              <div data-flick-cards-item-status="" data-flick-cards-item="" class="flick-group__item">
+                <div class="flick-card" style="background-color:#1d1a16">
+                  <div class="flick-card__before"></div>
+                  <div class="flick-card__media">
+                    <span class="flick-card__cat">Website</span>
+                    <h3 class="flick-card__h3">Zamana<br>Studio</h3>
+                    <a href="#contact" class="flick-card__btn"><span class="flick-card__btn-span">View Project ↗</span></a>
+                  </div>
+                </div>
+              </div>
+
+              <div data-flick-cards-item-status="" data-flick-cards-item="" class="flick-group__item">
+                <div class="flick-card" style="background-color:#131720">
+                  <div class="flick-card__before"></div>
+                  <div class="flick-card__media">
+                    <span class="flick-card__cat">Application</span>
+                    <h3 class="flick-card__h3">Ayesha<br>Jatoi</h3>
+                    <a href="#contact" class="flick-card__btn"><span class="flick-card__btn-span">View Project ↗</span></a>
+                  </div>
+                </div>
+              </div>
+
+              <div data-flick-cards-item-status="" data-flick-cards-item="" class="flick-group__item">
+                <div class="flick-card" style="background-color:#1a1912">
+                  <div class="flick-card__before"></div>
+                  <div class="flick-card__media">
+                    <span class="flick-card__cat">Website</span>
+                    <h3 class="flick-card__h3">The<br>Fred</h3>
+                    <a href="#contact" class="flick-card__btn"><span class="flick-card__btn-span">View Project ↗</span></a>
+                  </div>
+                </div>
+              </div>
+
+              <div data-flick-cards-item-status="" data-flick-cards-item="" class="flick-group__item">
+                <div class="flick-card" style="background-color:#121a15">
+                  <div class="flick-card__before"></div>
+                  <div class="flick-card__media">
+                    <span class="flick-card__cat">Application</span>
+                    <h3 class="flick-card__h3">North<br>Atlas</h3>
+                    <a href="#contact" class="flick-card__btn"><span class="flick-card__btn-span">View Project ↗</span></a>
+                  </div>
+                </div>
+              </div>
+
+              <div data-flick-cards-item-status="" data-flick-cards-item="" class="flick-group__item">
+                <div class="flick-card" style="background-color:#1a1318">
+                  <div class="flick-card__before"></div>
+                  <div class="flick-card__media">
+                    <span class="flick-card__cat">Website</span>
+                    <h3 class="flick-card__h3">Studio<br>Wren</h3>
+                    <a href="#contact" class="flick-card__btn"><span class="flick-card__btn-span">View Project ↗</span></a>
+                  </div>
+                </div>
+              </div>
+
+              <div data-flick-cards-item-status="" data-flick-cards-item="" class="flick-group__item">
+                <div class="flick-card" style="background-color:#1a1714">
+                  <div class="flick-card__before"></div>
+                  <div class="flick-card__media">
+                    <span class="flick-card__cat">Prototype</span>
+                    <h3 class="flick-card__h3">Argo<br>Series A</h3>
+                    <a href="#contact" class="flick-card__btn"><span class="flick-card__btn-span">View Project ↗</span></a>
+                  </div>
+                </div>
+              </div>
+
+              <div data-flick-cards-item-status="" data-flick-cards-item="" class="flick-group__item">
+                <div class="flick-card" style="background-color:#12151a">
+                  <div class="flick-card__before"></div>
+                  <div class="flick-card__media">
+                    <span class="flick-card__cat">Application</span>
+                    <h3 class="flick-card__h3">Vessel<br>Labs</h3>
+                    <a href="#contact" class="flick-card__btn"><span class="flick-card__btn-span">View Project ↗</span></a>
+                  </div>
+                </div>
+              </div>
+
+              <div data-flick-cards-item-status="" data-flick-cards-item="" class="flick-group__item">
+                <div class="flick-card" style="background-color:#1a1212">
+                  <div class="flick-card__before"></div>
+                  <div class="flick-card__media">
+                    <span class="flick-card__cat">Website</span>
+                    <h3 class="flick-card__h3">Maison<br>Kern</h3>
+                    <a href="#contact" class="flick-card__btn"><span class="flick-card__btn-span">View Project ↗</span></a>
+                  </div>
+                </div>
+              </div>
+
+              <div data-flick-cards-item-status="" data-flick-cards-item="" class="flick-group__item">
+                <div class="flick-card" style="background-color:#14181a">
+                  <div class="flick-card__before"></div>
+                  <div class="flick-card__media">
+                    <span class="flick-card__cat">Prototype</span>
+                    <h3 class="flick-card__h3">Carta<br>Collective</h3>
+                    <a href="#contact" class="flick-card__btn"><span class="flick-card__btn-span">View Project ↗</span></a>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div class="flick-controls">
+        <button class="flick-btn" data-flick-prev aria-label="Previous project">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="flick-hint">Drag To Explore</span>
+        <button class="flick-btn" data-flick-next aria-label="Next project">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
     </section>
 
-    <section class="project" data-index="2">
-      <div class="project__grid">
-        <div class="project__image-wrapper">
-          <img src="images/project3.svg" alt="Vertex Labs Project" class="project__image">
+    <!-- ─── ABOUT ─────────────────────────────────────────────────── -->
+    <section id="about" aria-labelledby="about-heading">
+      <div class="section-head">
+        <h2 class="work-h" id="about-heading">About&nbsp;Us</h2>
+        <span class="label label-muted">Studio — Practice</span>
+      </div>
+
+      <div class="about-grid">
+        <h3 class="about-headline">
+          A small studio with a settled point of view.
+        </h3>
+        <div class="about-body">
+          <p>
+            Today Would Be Nice is a design studio in Lahore, Pakistan. We design prototypes, applications, and websites for founders, product teams, and organisations who care how things are made.
+          </p>
+          <p>
+            Our work is rooted in the Swiss tradition — clear typography, considered grids, and ideas placed deliberately on the page. We believe restraint is not the absence of style; it is the style.
+          </p>
+          <p>
+            We work in small engagements with full attention. No filler, no factory. Just the design, well made.
+          </p>
         </div>
+      </div>
+
+    </section>
+
+    <!-- ─── SERVICES ──────────────────────────────────────────────── -->
+    <section id="services" aria-labelledby="services-heading">
+      <div class="section-head">
+        <h2 class="work-h" id="services-heading">What We Do</h2>
+        <span class="label label-muted">Three Disciplines</span>
+      </div>
+
+      <div class="svc-row">
+        <span class="svc-num">001</span>
+        <h3 class="svc-name">Prototypes</h3>
+        <p class="svc-desc">
+          Working prototypes that help teams test, pitch, and move forward — from a first sketch to a thing people can actually use.
+        </p>
+        <ul class="svc-list">
+          <li>Concept &amp; flow design</li>
+          <li>Interactive prototypes</li>
+          <li>Investor &amp; pitch decks</li>
+          <li>Validation studies</li>
+        </ul>
+      </div>
+
+      <div class="svc-row">
+        <span class="svc-num">002</span>
+        <h3 class="svc-name">Applications</h3>
+        <p class="svc-desc">
+          Software that earns daily use. We design and build product interfaces with the same care given to any well-made tool.
+        </p>
+        <ul class="svc-list">
+          <li>Product UI &amp; UX</li>
+          <li>Design systems</li>
+          <li>Web &amp; mobile apps</li>
+          <li>Engineering handoff</li>
+        </ul>
+      </div>
+
+      <div class="svc-row" style="border-bottom: 1px solid var(--ink);">
+        <span class="svc-num">003</span>
+        <h3 class="svc-name">Websites</h3>
+        <p class="svc-desc">
+          Presence with intent. Editorial, identity-driven sites built around clarity and craft — not templates and trends.
+        </p>
+        <ul class="svc-list">
+          <li>Brand &amp; marketing sites</li>
+          <li>Editorial &amp; portfolio</li>
+          <li>E-commerce</li>
+          <li>CMS &amp; build</li>
+        </ul>
       </div>
     </section>
 
-    <section class="project" data-index="3">
-      <div class="project__grid">
-        <div class="project__image-wrapper">
-          <img src="images/project4.svg" alt="Maison Collective Project" class="project__image">
+    <!-- ─── CONTACT ───────────────────────────────────────────────── -->
+    <section id="contact" aria-labelledby="contact-heading">
+      <div class="section-head">
+        <h2 class="work-h" id="contact-heading">Let's Talk</h2>
+        <span class="label label-muted">Open — Q3 / 2026</span>
+      </div>
+
+      <div class="contact-grid">
+        <div>
+          <p class="contact-headline">
+            Tell us<br><em>what</em> you'd like<br>to make.
+          </p>
+          <p class="contact-sub">
+            We read everything. Founders, product teams, and organisations welcome. Project briefs, half-formed ideas, and second opinions all accepted.
+          </p>
+          <a href="mailto:hello@todaywouldbenice.com" class="contact-email">
+            hello@todaywouldbenice.com&nbsp;↗
+          </a>
         </div>
+
+        <aside class="contact-side">
+          <div class="contact-block">
+            <div class="k">Studio</div>
+            <div class="v">Lahore, Pakistan<br>By appointment.</div>
+          </div>
+          <div class="contact-block">
+            <div class="k">Hours</div>
+            <div class="v">Mon – Fri<br>10:00 – 18:00 PKT</div>
+          </div>
+          <div class="contact-block">
+            <div class="k">Elsewhere</div>
+            <a class="v" href="#">Instagram&nbsp;↗</a>
+            <a class="v" href="#">Read.cv&nbsp;↗</a>
+            <a class="v" href="#">LinkedIn&nbsp;↗</a>
+          </div>
+          <div class="contact-block">
+            <div class="k">Press &amp; Other</div>
+            <a class="v" href="mailto:studio@todaywouldbenice.com">studio@todaywouldbenice.com</a>
+          </div>
+        </aside>
       </div>
     </section>
+
   </main>
 
-  <!-- Client/Scope Bar - Fixed Bottom -->
-  <footer class="meta-bar">
-    <div class="meta-bar__client">
-      <span class="meta-bar__label">Client</span>
-      <span class="meta-bar__value" id="client-name">Zamana Studios</span>
+  <!-- ─── FOOTER ────────────────────────────────────────────────── -->
+  <footer role="contentinfo">
+    <div class="ft-brand">
+      <img src="./assets/twbn-logo.svg" class="ft-mark" alt="Today Would Be Nice">
     </div>
-    <div class="meta-bar__scope">
-      <span class="meta-bar__label">Scope</span>
-      <span class="meta-bar__value" id="scope-type">Website</span>
+    <div class="ft-center">
+      <a href="#" aria-label="Instagram" class="ft-instagram">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+        </svg>
+      </a>
     </div>
+    <div class="ft-right">Set in Inktrap &amp; Satoshi</div>
   </footer>
 
-  <!-- About Overlay -->
-  <div class="about-overlay" id="about-overlay">
-    <button class="about-overlay__close" aria-label="Close about section">&times;</button>
-    <div class="about-overlay__content">
-      <h1 class="about-overlay__text">We design portfolio websites.</h1>
-    </div>
-  </div>
+  <!-- ─── SCRIPTS ───────────────────────────────────────────────── -->
+  <script>
+    // ── Hamburger menu ──────────────────────────────────────────────
+    (function () {
+      const btn   = document.getElementById('nav-hamburger');
+      const links = document.getElementById('nav-links');
+      if (!btn || !links) return;
 
-  <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script>
-  <script src="js/main.js"></script>
+      const nav = btn.closest('nav');
+
+      btn.addEventListener('click', () => {
+        const open = links.classList.toggle('is-open');
+        btn.classList.toggle('is-open', open);
+        nav.classList.toggle('menu-open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        document.body.style.overflow = open ? 'hidden' : '';
+      });
+
+      // Close on nav link click
+      links.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
+          links.classList.remove('is-open');
+          btn.classList.remove('is-open');
+          nav.classList.remove('menu-open');
+          btn.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        });
+      });
+    })();
+
+    gsap.registerPlugin(Draggable);
+
+    function initFlickCards() {
+      const sliders = document.querySelectorAll('[data-flick-cards-init]');
+
+      sliders.forEach(slider => {
+        const list = slider.querySelector('[data-flick-cards-list]');
+        const cards = Array.from(list.querySelectorAll('[data-flick-cards-item]'));
+        const total = cards.length;
+        let activeIndex = 0;
+
+        const sliderWidth = slider.offsetWidth;
+        const threshold = 0.1;
+
+        const draggers = [];
+        cards.forEach(card => {
+          const dragger = document.createElement('div');
+          dragger.setAttribute('data-flick-cards-dragger', '');
+          card.appendChild(dragger);
+          draggers.push(dragger);
+        });
+
+        slider.setAttribute('data-flick-drag-status', 'grab');
+
+        function getConfig(i, currentIndex) {
+          let diff = i - currentIndex;
+          if (diff > total / 2) diff -= total;
+          else if (diff < -total / 2) diff += total;
+
+          switch (diff) {
+            case  0: return { x: 0,   y: 0, rot: 0,   s: 1,   o: 1, z: 5 };
+            case  1: return { x: 25,  y: 1, rot: 10,  s: 0.9, o: 1, z: 4 };
+            case -1: return { x: -25, y: 1, rot: -10, s: 0.9, o: 1, z: 4 };
+            case  2: return { x: 45,  y: 5, rot: 15,  s: 0.8, o: 1, z: 3 };
+            case -2: return { x: -45, y: 5, rot: -15, s: 0.8, o: 1, z: 3 };
+            default:
+              const dir = diff > 0 ? 1 : -1;
+              return { x: 55 * dir, y: 5, rot: 20 * dir, s: 0.6, o: 0, z: 2 };
+          }
+        }
+
+        function renderCards(currentIndex) {
+          cards.forEach((card, i) => {
+            const cfg = getConfig(i, currentIndex);
+            let status;
+            if (cfg.x === 0)        status = 'active';
+            else if (cfg.x === 25)  status = '2-after';
+            else if (cfg.x === -25) status = '2-before';
+            else if (cfg.x === 45)  status = '3-after';
+            else if (cfg.x === -45) status = '3-before';
+            else                    status = 'hidden';
+
+            card.setAttribute('data-flick-cards-item-status', status);
+            card.style.zIndex = cfg.z;
+
+            gsap.to(card, {
+              duration: 0.6,
+              ease: 'elastic.out(1.2, 1)',
+              xPercent: cfg.x,
+              yPercent: cfg.y,
+              rotation: cfg.rot,
+              scale: cfg.s,
+              opacity: cfg.o
+            });
+          });
+        }
+
+        renderCards(activeIndex);
+
+        const section = slider.closest('section');
+        if (section) {
+          const prevBtn = section.querySelector('[data-flick-prev]');
+          const nextBtn = section.querySelector('[data-flick-next]');
+          if (prevBtn) prevBtn.addEventListener('click', () => {
+            activeIndex = (activeIndex - 1 + total) % total;
+            renderCards(activeIndex);
+          });
+          if (nextBtn) nextBtn.addEventListener('click', () => {
+            activeIndex = (activeIndex + 1 + total) % total;
+            renderCards(activeIndex);
+          });
+        }
+
+        if (total < 7) return;
+
+        let pressClientX = 0;
+        let pressClientY = 0;
+
+        Draggable.create(draggers, {
+          type: 'x',
+          edgeResistance: 0.8,
+          bounds: { minX: -sliderWidth / 2, maxX: sliderWidth / 2 },
+          inertia: false,
+
+          onPress() {
+            pressClientX = this.pointerEvent.clientX;
+            pressClientY = this.pointerEvent.clientY;
+            slider.setAttribute('data-flick-drag-status', 'grabbing');
+          },
+
+          onDrag() {
+            const rawProgress = this.x / sliderWidth;
+            const progress = Math.min(1, Math.abs(rawProgress));
+            const direction = rawProgress > 0 ? -1 : 1;
+            const nextIndex = (activeIndex + direction + total) % total;
+
+            cards.forEach((card, i) => {
+              const from = getConfig(i, activeIndex);
+              const to = getConfig(i, nextIndex);
+              const mix = prop => from[prop] + (to[prop] - from[prop]) * progress;
+              gsap.set(card, {
+                xPercent: mix('x'),
+                yPercent: mix('y'),
+                rotation: mix('rot'),
+                scale: mix('s'),
+                opacity: mix('o')
+              });
+            });
+          },
+
+          onRelease() {
+            slider.setAttribute('data-flick-drag-status', 'grab');
+
+            const releaseClientX = this.pointerEvent.clientX;
+            const releaseClientY = this.pointerEvent.clientY;
+            const dragDistance = Math.hypot(releaseClientX - pressClientX, releaseClientY - pressClientY);
+
+            const raw = this.x / sliderWidth;
+            let shift = 0;
+            if (raw > threshold) shift = -1;
+            else if (raw < -threshold) shift = 1;
+
+            if (shift !== 0) {
+              activeIndex = (activeIndex + shift + total) % total;
+              renderCards(activeIndex);
+            }
+
+            gsap.to(this.target, { x: 0, duration: 0.3, ease: 'power1.out' });
+
+            if (dragDistance < 4) {
+              this.target.style.pointerEvents = 'none';
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  const el = document.elementFromPoint(releaseClientX, releaseClientY);
+                  if (el) el.dispatchEvent(new MouseEvent('click', { view: window, bubbles: true, cancelable: true }));
+                  this.target.style.pointerEvents = 'auto';
+                });
+              });
+            }
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initFlickCards);
+  </script>
+  <script>
+    // Nav: active section highlight
+    (function () {
+      const links = document.querySelectorAll('.nav-links a[href^="#"]');
+      const map = new Map();
+      links.forEach(a => {
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if (el) map.set(el, a);
+      });
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          const a = map.get(e.target);
+          if (!a) return;
+          if (e.isIntersecting) {
+            links.forEach(l => l.removeAttribute('aria-current'));
+            a.setAttribute('aria-current', 'true');
+          }
+        });
+      }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+      map.forEach((_, el) => io.observe(el));
+    })();
+
+    // Work item: enter to "open"
+    document.querySelectorAll('.work-item[tabindex]').forEach(item => {
+      item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          item.click();
+        }
+      });
+    });
+  </script>
+
 </body>
 </html>
-
