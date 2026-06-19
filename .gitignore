@@ -2,3 +2,6 @@
 **/.DS_Store
 taste-skill/
 .vercel
+.claude/
+paper.png
+_site-wip.html
